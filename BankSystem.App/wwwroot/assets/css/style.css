@@ -1,0 +1,113 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital@1&family=Open+Sans&family=Oswald&family=Poppins:ital,wght@0,300;0,500;1,400&family=Roboto:ital@0;1&family=Sofia+Sans+Condensed&display=swap');
+  *,
+  ::after,
+  ::before{
+    box-sizing: border-box;
+  }
+
+  body{
+    /*font-family: 'Montserrat', sans-serif;*/
+    /*font-size: 0.875rem;*/
+    opacity: 1;
+    overflow-y: scroll;
+    margin: 0;
+  }
+  a{
+    cursor: pointer;
+    text-decoration: none;
+    /*font-family: 'Montserrat', sans-serif;*/
+
+  }
+  li{
+    list-style: none;
+  }
+
+  /*layout for admin dashboard*/
+  .wrapper{
+    align-items: stretch;
+    display: flex;
+    width: 100%;
+  }
+  #sidebar{
+    max-width: 264px;
+    min-width: 264px;
+    background: #000000;
+    transition: all 0.35s ease-in-out;
+  }
+
+
+
+  .main{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+    overflow: hidden;
+    transition: all 0.35s ease-in-out;
+    width: 100%;
+    
+  }
+
+  /*sidebar elements*/
+  .sidebar-logo{
+    padding: 1.15rem;
+  }
+  .sidebar-logo a{
+    color: #e9ecef;
+    font-size: 25px;
+    font-weight: 600;
+
+  }
+
+  .sidebar-nav{
+    flex-grow: 1;
+    list-style: none;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-left: 0;
+    height: 100%;
+    width: 240px;
+  }
+  .sidebar-item .sidebar-link i{
+    font-size: 28px;
+   font-weight: 500px;
+   min-width: 60px;
+  }
+  .sidebar-item .sidebar-link i:hover{
+    color:#ff0000;
+  }
+  .sidebar-nav .sidebar-link{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+  }
+
+  .sidebar-nav .sidebar-link:hover{
+    color: #ff0000;
+  }
+  
+  a.sidebar-link{
+    padding: .625rem 1.625rem;
+    color: #e9ecef;
+    position: relative;
+    display: block;
+  }
+  .avatar{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+  .navbar-expand .navbar-nav{
+    margin-left: 800px;
+  }
+  .navbar-nav .dropdown-menu {
+    position: absolute !important;
+}
+
+
+  #sidebar.collapsed{
+    margin-left: -264px;
+  }
+
