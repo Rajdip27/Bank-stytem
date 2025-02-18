@@ -10,7 +10,7 @@ public class CardInfoConfiguration:IEntityTypeConfiguration<CardInfo>
     {
         builder.ToTable(nameof(CardInfo));
         builder.HasKey(x => x.Id);
-        builder.HasOne(x => x.FileType).WithMany(x => x.CardInfos).HasForeignKey(x => x.FileTypeId);
+        builder.HasOne(x => x.FileTypes).WithMany(x => x.CardInfos).HasForeignKey(x => x.FileTypeId);
     }
 }
 

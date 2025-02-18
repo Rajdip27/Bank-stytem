@@ -2,7 +2,7 @@
 @model BankSystem.Service.ViewModel.CardInfoVm
 
 @{
-    ViewData["Title"] = "Shipment Create";
+    ViewData["Title"] = "Card Info Create";
 }
 
 <br />
@@ -15,39 +15,54 @@
                 <h4 class="card-title">@ViewBag.Title</h4>
             </div>
             <div class="card-body">
-                <form asp-controller="Shipment" asp-action="CreateOrEdit" method="post">
+                <form asp-controller="CardInfo" asp-action="CreateOrEdit" method="post" enctype="multipart/form-data">
                     <div class="form-group row mt-2">
                         <label asp-for=CardNumber class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
-                            <input readonly asp-for="CardNumber" class="form-control">
+                            <input type="number" asp-for="CardNumber" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row mt-2">
                         <label asp-for=CustomerName class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
-                            <input type="date" asp-for="CustomerName" class="form-control">
+                            <input type="text" asp-for="CustomerName" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row mt-2">
                         <label asp-for=AccountNumber class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
-                            <input type="date" asp-for="AccountNumber" class="form-control">
+                            <input type="number" asp-for="AccountNumber" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row mt-2">
-                        <label asp-for=StatusId class="col-form-label col-md-2"></label>
+                        <label asp-for=FileTypeId class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
                             @* <input type="text" asp-for="ConsignmentNumber" class="form-control"> *@
-                            <select class="form-control" asp-for="StatusId" asp-items="@ViewBag.StatusId">
+                            <select class="form-control" asp-for="FileTypeId" asp-items="@ViewBag.fileTypeId">
                                 <option>--Select Status Name--</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-2">
+                        <label asp-for="FileContent" class="col-form-label col-md-2"></label>
+                        <div class="col-md-7">
+                            <input type="file" asp-for="FileContent" class="form-control" id="fileInput" onchange="previewImage(event)">
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="form-group row mt-2">
+                        <div class="col-md-7 offset-md-2">
+                            <img src="data:image/jpeg;base64,@Model.CardFile" alt="Image" style="max-width: 100px; max-height: 100px;" />
+                                
                         </div>
                     </div>
                     
                    
                     <div class="input-group-append mt-4 justify-content-end">
                         <input type="submit" value="Save" class="btn btn-primary text-center mr-2" />
-                        <a class="btn btn-danger text-center" asp-action="Index" asp-controller="Shipment">Back to List</a>
+                        <a class="btn btn-danger text-center" asp-action="Index" asp-controller="CardInfo">Back to List</a>
                     </div>
                 </form>
             </div>
@@ -60,4 +75,24 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function previewImage(event) {
+            const fileInput = event.target;
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                imagePreview.src = '#';
+                imagePreview.style.display = 'none';
+            }
+        }
+    </script>
 }

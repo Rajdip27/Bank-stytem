@@ -10,5 +10,5 @@ public class CardInfo : AuditableEntity
     public string AccountNumber { get; set; }
     public long FileTypeId { get; set; }
 
-    public FileType FileType { get; set; }
+    public FileType FileTypes { get; set; }
 }
