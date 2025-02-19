@@ -44,6 +44,21 @@
                                 File-Type
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a asp-action="Index" id="Shipper" asp-controller="CardInfo" class="sidebar-link">
+                                <i class="bi bi-hr"></i>
+                                File-Type
+                            </a>
+                        </li>
+                    }
+                    @if (User.IsInRole("User"))
+                    {
+                        <li class="sidebar-item">
+                            <a asp-action="Index" id="Shipper" asp-controller="UserView" class="sidebar-link">
+                                <i class="bi bi-hr"></i>
+                               User Data
+                            </a>
+                        </li>
                     }
                     <li class="sidebar-item">
                         <a asp-action="Logout" asp-controller="Account" class="sidebar-link">

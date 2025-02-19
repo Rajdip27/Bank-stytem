@@ -11,7 +11,7 @@ public class CardInfoVm:BaseEntity
     public string CardNumber { get; set; }
     public string CustomerName { get; set; }
     public string AccountNumber { get; set; }
-    
     public IFormFile FileContent { get; set; }
     public long FileTypeId { get; set; }
+    public FileType FileTypes { get; set; }
 }

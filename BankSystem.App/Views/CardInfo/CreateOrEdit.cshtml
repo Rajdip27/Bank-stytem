@@ -1,5 +1,4 @@
-﻿﻿
-@model BankSystem.Service.ViewModel.CardInfoVm
+﻿@model BankSystem.Service.ViewModel.CardInfoVm
 
 @{
     ViewData["Title"] = "Card Info Create";
@@ -16,50 +15,77 @@
             </div>
             <div class="card-body">
                 <form asp-controller="CardInfo" asp-action="CreateOrEdit" method="post" enctype="multipart/form-data">
+                    <!-- Card Number -->
                     <div class="form-group row mt-2">
-                        <label asp-for=CardNumber class="col-form-label col-md-2"></label>
+                        <label asp-for="CardNumber" class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
                             <input type="number" asp-for="CardNumber" class="form-control">
                         </div>
                     </div>
+
+                    <!-- Customer Name -->
                     <div class="form-group row mt-2">
-                        <label asp-for=CustomerName class="col-form-label col-md-2"></label>
+                        <label asp-for="CustomerName" class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
                             <input type="text" asp-for="CustomerName" class="form-control">
                         </div>
                     </div>
+
+                    <!-- Account Number -->
                     <div class="form-group row mt-2">
-                        <label asp-for=AccountNumber class="col-form-label col-md-2"></label>
+                        <label asp-for="AccountNumber" class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
                             <input type="number" asp-for="AccountNumber" class="form-control">
                         </div>
                     </div>
+
+                    <!-- File Type -->
                     <div class="form-group row mt-2">
-                        <label asp-for=FileTypeId class="col-form-label col-md-2"></label>
+                        <label asp-for="FileTypeId" class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
-                            @* <input type="text" asp-for="ConsignmentNumber" class="form-control"> *@
                             <select class="form-control" asp-for="FileTypeId" asp-items="@ViewBag.fileTypeId">
-                                <option>--Select Status Name--</option>
+                                <option>--Select File Type--</option>
                             </select>
                         </div>
                     </div>
 
+                    <!-- File Upload -->
                     <div class="form-group row mt-2">
                         <label asp-for="FileContent" class="col-form-label col-md-2"></label>
                         <div class="col-md-7">
-                            <input type="file" asp-for="FileContent" class="form-control" id="fileInput" onchange="previewImage(event)">
+                            <input type="file" asp-for="FileContent" class="form-control" id="fileInput" onchange="previewFile(event)">
                         </div>
                     </div>
 
-                    <!-- Image Preview -->
+                    <!-- File Preview -->
                     <div class="form-group row mt-2">
                         <div class="col-md-7 offset-md-2">
-                            <img src="data:image/jpeg;base64,@Model.CardFile" alt="Image" style="max-width: 100px; max-height: 100px;" />
-                                
+                            <!-- Always render the preview elements -->
+                            <img id="imagePreview" src="#" alt="Image Preview" style="display: none; max-width: 100px; max-height: 100px;" />
+                            <iframe id="pdfPreview" src="#" style="display: none; width: 100%; height: 200px;"></iframe>
+
+                            <!-- Display old previews if editing an existing record -->
+                            @if (Model.Id > 0)
+                            {
+                                @if (Model.FileTypes.Name == "Pdf")
+                                {
+                                    <!-- Display PDF in an iframe (old preview) -->
+                                    <iframe src="data:application/pdf;base64,@Model.CardFile" width="100%" height="200px" id="oldPdfPreview"></iframe>
+                                }
+                                else if (Model.FileTypes.Name == "Image")
+                                {
+                                    <!-- Display Image (old preview) -->
+                                    <img src="data:image/jpeg;base64,@Model.CardFile" alt="Image Preview" style="max-width: 100px; max-height: 100px;" id="oldImagePreview" />
+                                }
+                                else
+                                {
+                                    <p>Unsupported file type</p>
+                                }
+                            }
                         </div>
                     </div>
-                    
-                   
+
+                    <!-- Submit and Back Buttons -->
                     <div class="input-group-append mt-4 justify-content-end">
                         <input type="submit" value="Save" class="btn btn-primary text-center mr-2" />
                         <a class="btn btn-danger text-center" asp-action="Index" asp-controller="CardInfo">Back to List</a>
@@ -70,28 +96,61 @@
     </div>
 </div>
 
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        function previewImage(event) {
+        function previewFile(event) {
             const fileInput = event.target;
             const imagePreview = document.getElementById('imagePreview');
+            const pdfPreview = document.getElementById('pdfPreview');
 
+            // Check for the old image and PDF preview elements
+            const oldImagePreview = document.getElementById('oldImagePreview');
+            const oldPdfPreview = document.getElementById('oldPdfPreview');
+
+            // Hide old previews if they exist
+            if (oldImagePreview) {
+                oldImagePreview.style.display = 'none';
+            }
+            if (oldPdfPreview) {
+                oldPdfPreview.style.display = 'none';
+            }
+
+            // Hide new previews by default
+            imagePreview.style.display = 'none';
+            pdfPreview.style.display = 'none';
+
+            // Ensure a file is selected before proceeding
             if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
 
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
+                // Handle PDF file
+                if (file.type === 'application/pdf') {
+                    reader.onload = function (e) {
+                        pdfPreview.src = e.target.result;
+                        pdfPreview.style.display = 'block'; // Display PDF preview
+                    };
+                }
+                // Handle image file
+                else if (file.type.startsWith('image/')) {
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block'; // Display image preview
+                    };
+                }
+                // If file type is not supported
+                else {
+                    alert('Unsupported file type. Please upload an image or PDF.');
+                }
 
-                reader.readAsDataURL(fileInput.files[0]);
+                reader.readAsDataURL(file);
             } else {
-                imagePreview.src = '#';
+                // If no file is selected, hide both previews
                 imagePreview.style.display = 'none';
+                pdfPreview.style.display = 'none';
             }
         }
     </script>

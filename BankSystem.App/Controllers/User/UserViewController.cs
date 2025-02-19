@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BankSystem.Service.Repository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BankSystem.App.Controllers.User
+namespace BankSystem.App.Controllers.User;
+[Authorize(Roles = "User")]
+public class UserViewController(ICardInfoRepsitory cardInfoRepsitory) : Controller
 {
-    public class UserViewController : Controller
+    [HttpGet]
+    public async Task<IActionResult> Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        var data = await cardInfoRepsitory.GetAllAsync(x => x.FileTypes);
+        return View(data);
     }
 }

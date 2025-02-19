@@ -2,14 +2,18 @@
 using BankSystem.Core.Entities;
 using BankSystem.Service.Repository;
 using BankSystem.Service.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 namespace BankSystem.App.Controllers.Admin;
-
+[Authorize(Roles = "Administrator")]
 public class CardInfoController(ICardInfoRepsitory cardInfoRepsitory, IMapper mapper,IFileTypeRepository fileTypeRepository) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index() => View(await cardInfoRepsitory.GetAllAsync());
+    public async Task<IActionResult> Index()
+    {
+      var data=  await cardInfoRepsitory.GetAllAsync(x=>x.FileTypes);
+        return View(data);
+    }
     [HttpGet]
     public async Task<IActionResult> CreateOrEdit(long id)
     {
@@ -17,7 +21,13 @@ public class CardInfoController(ICardInfoRepsitory cardInfoRepsitory, IMapper ma
         if (id == 0)
             return View(new CardInfoVm());
         else
-            return View(await cardInfoRepsitory.FirstOrDefaultAsync(id));
+        {
+            var data = await cardInfoRepsitory.FirstOrDefaultAsync(c => c.Id == id,  // Predicate to get the correct row
+                    c => c.FileTypes);
+           
+            return View(data);
+        }
+            
     }
 
     [HttpPost]

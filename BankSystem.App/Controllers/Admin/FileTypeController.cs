@@ -2,10 +2,11 @@
 using BankSystem.Core.Entities;
 using BankSystem.Service.Repository;
 using BankSystem.Service.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankSystem.App.Controllers.Admin;
-
+[Authorize(Roles = "Administrator")]
 public class FileTypeController(IFileTypeRepository fileTypeRepository,IMapper mapper) : Controller
 {
     [HttpGet]
