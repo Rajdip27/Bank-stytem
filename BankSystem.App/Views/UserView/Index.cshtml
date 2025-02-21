@@ -1,0 +1,125 @@
+﻿@model IEnumerable<BankSystem.Service.ViewModel.CardInfoVm>
+
+@{
+    ViewData["Title"] = "Index";
+    int idno = 1;
+}
+
+<div class="row mt-5">
+    <div class="col-md-12 d-flex">
+        <div class="card card-table flex-fill">
+            <div class="card-header">
+                <!-- Search Input with col-md-6 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" id="shipmentSearch" class="form-control" placeholder="Search by Account Number...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body m-4">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center" id="shipmentTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(model => model.CardNumber)</th>
+                                <th>@Html.DisplayNameFor(model => model.CustomerName)</th>
+                                <th>@Html.DisplayNameFor(model => model.AccountNumber)</th>
+                                <th>File Preview</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@idno</td>
+                                    <td>@Html.DisplayFor(modelItem => item.CardNumber)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.AccountNumber)</td>
+                                    <td>
+                                        @if (item.FileTypes.Name == "Pdf")
+                                        {
+                                            <!-- Display PDF in an iframe -->
+                                            <iframe src="data:application/pdf;base64,@item.CardFile" width="100%" height="200px"></iframe>
+                                        }
+                                        else if (item.FileTypes.Name == "Image")
+                                        {
+                                            <!-- Display Image -->
+                                            <img src="data:image/jpeg;base64,@item.CardFile" alt="Image Preview" style="max-width: 100px; max-height: 100px;" />
+                                        }
+                                        else
+                                        {
+                                            <p>Unsupported file type</p>
+                                        }
+                                    </td>
+                                    <td>
+                                        <!-- Edit Button -->
+                                        @if (item.FileTypes.Name == "Pdf")
+                                        {
+                                            <button class="btn btn-success" onclick="downloadPdf('@item.CardFile', '@item.CardNumber')">
+                                                <i class="fa fa-download" aria-hidden="true"></i> Download
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                                idno++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable
+            $('#shipmentTable').DataTable();
+
+            // Keyup event for search input
+            $('#shipmentSearch').on('keyup', function () {
+                var searchValue = $(this).val().toLowerCase(); // Get the search value
+                $('#shipmentTable tbody tr').each(function () {
+                    var accountNumber = $(this).find('td:eq(3)').text().toLowerCase(); // Get the AccountNumber value from the 4th column (index 3)
+                    if (accountNumber.includes(searchValue)) {
+                        $(this).show(); // Show the row if it matches the search
+                    } else {
+                        $(this).hide(); // Hide the row if it doesn't match
+                    }
+                });
+            });
+        });
+
+        // Function to download PDF
+        function downloadPdf(base64Data, fileName) {
+            // Convert Base64 to a Blob
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName + '.pdf'; // Set the file name
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(link.href);
+        }
+    </script>
+}
