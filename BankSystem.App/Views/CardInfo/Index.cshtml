@@ -9,12 +9,9 @@
     <div class="col-md-12 d-flex">
         <div class="card card-table flex-fill">
             <div class="card-header">
-                <div class="float-left">
-                    <input type="text" id="shipmentSearch" class="form-control col-6" placeholder="Search...">
-                </div>
-                <h4 class="card-title float-left mt-2 ml-3">FileType List</h4>
+                <h4 class="card-title float-left mt-2 ml-3">Card Info List</h4>
                 <a asp-action="CreateOrEdit" asp-controller="FileType" class="btn btn-primary float-right veiwbutton">
-                    <i class="fa fa-plus" aria-hidden="true"></i> Create FileType
+                    <i class="fa fa-plus" aria-hidden="true"></i> Create Card Info
                 </a>
                 <button id="searchButton" class="btn btn-primary float-right mr-2">Search</button>
             </div>
@@ -92,9 +89,6 @@
         });
 
         // Add click event for the search button
-        $('#searchButton').on('click', function () {
-            var consignmentNumberValue = $('#shipmentSearch').val();
-            $('#shipmentTable').DataTable().column(1).search(consignmentNumberValue).draw();
-        });
+       
     </script>
 }
